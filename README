@@ -1,0 +1,21 @@
+Pentru început, ținem evidența clienților conectați folosind un vector de structuri de tip client. Acest vector ne permite să avem acces rapid la informațiile despre fiecare client și să gestionăm conexiunile cu aceștia.
+
+De asemenea, pentru a gestiona abonamentele la diferitele topicuri, folosim un vector de vectori de clienți. Fiecare vector de clienți corespunde unui topic disponibil pentru abonare, astfel încât să putem să distribuim mesajele către toți abonații relevanți pentru un anumit topic.
+
+Pentru a comunica cu clienții, utilizăm două socket-uri separate, unul pentru protocolul TCP și unul pentru protocolul UDP. Aceste socket-uri ne permit să primim și să trimitem mesaje către clienți.
+
+Atunci când primim un mesaj pe socket-ul TCP, verificăm dacă clientul care s-a abonat este deja conectat sau nu. Dacă nu este, îl adăugăm în vectorul corespunzător și afișăm mesajele corespunzătoare fiecărui caz.
+
+În cazul în care primim un mesaj pe socket-ul UDP, introducem datele necesare într-o structură de mesaj denumită simplu "udp". Apoi, trimitem mesajul către abonații relevanți pentru topicul respectiv, inclusiv lungimea mesajului și un delimitator specific ("END") pentru a marca sfârșitul mesajului.
+
+De la tastatură, serverul acceptă doar comanda "exit", care este trimisă către toți abonații, similar cu mesajele de tip UDP.
+
+Pentru mesajele trimise pe socket-ul clienților, verificăm dacă este o comandă de abonare sau "exit". Dacă este o comandă de abonare, adăugăm clientul în vectorul corespunzător de abonați, iar dacă este o comandă "exit", îl eliminăm pe client din lista de clienți conectați.
+
+Pentru clienții abonați, verificăm dacă primim mesaje de la tastatură sau de la server. Dacă primim mesaje de la server, le procesăm până când ajungem la delimitatorul "END", iar apoi cerem serverului mesajele până când ajungem la lungimea găsită. Dacă primim comanda "exit" între timp, închidem conexiunea și ne oprim. Dacă primim mesaje de la tastatură, afișăm mesajele specifice pentru abonare sau dezabonare, iar pentru comanda "exit", închidem conexiunea și trimitem un mesaj către server.
+
+În ceea ce privește structurile folosite, avem trei:
+
+Structura "tcp", folosită pentru mesajele de tip TCP, reține mesajul primit și ID-ul clientului care l-a trimis.
+Structura "client", care reține ID-ul clientului și socket-ul de pe care a trimis mesajul.
+Structura "udp", care reține topicul, tipul de date și payload-ul ce conține mesajul propriu-zis.
